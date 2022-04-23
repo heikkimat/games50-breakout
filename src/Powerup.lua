@@ -52,8 +52,8 @@ end
     Places the item in the middle of the screen, with no movement.
 ]]
 function Powerup:reset()
-    self.x = VIRTUAL_WIDTH / 2 - 2
-    self.y = VIRTUAL_HEIGHT / 2 - 2
+    self.x = math.random(4, VIRTUAL_WIDTH-20)
+    self.y = 0 
     self.dx = 0
     self.dy = 20
 end
