@@ -29,7 +29,8 @@ function PlayState:enter(params)
     self.balls = params.balls
     self.level = params.level
     
-    self.powerup = Powerup()
+    self.powerup = Powerup(3)
+    self.brickKey = Powerup(10)
 
     self.recoverPoints = self.score + 10000
     self.paddleIncreasePoints = self.score + 5000
@@ -42,7 +43,11 @@ function PlayState:enter(params)
     
     self.powerupFlag = false -- is powerup item visible
     self.powerupTimer = 0 
-    self.powerupTarget = 10 -- seconds
+    self.powerupTarget = math.random(10, 30) -- seconds
+    
+    self.brickKeyFlag = false -- is brickKey item visible
+    self.brickKeyTimer = 0 
+    self.brickKeyTarget = math.random(30, 60) -- seconds
 end
 
 function PlayState:update(dt)
@@ -66,6 +71,7 @@ function PlayState:update(dt)
     	ball:update(dt)
     end
     
+    --POWERUP
     -- powerup timer update
     self.powerupTimer = self.powerupTimer + dt
     -- if time is up create a powerup item
@@ -74,7 +80,6 @@ function PlayState:update(dt)
     	self.powerupFlag = true
     	self.powerup:reset()
     end
-    
     -- if powerup item goes below bounds, remove it
     if self.powerup.y >= VIRTUAL_HEIGHT then
     	self.powerupFlag = false
@@ -96,10 +101,38 @@ function PlayState:update(dt)
 		table.insert(self.balls, b)
         end
     end
-    
     if self.powerupFlag then
     	self.powerup:update(dt)
     end
+    
+    --BRICKKEY
+    -- brickKey timer update
+    self.brickKeyTimer = self.brickKeyTimer + dt
+    -- if time is up create a brickKey item
+    if self.brickKeyTimer > self.brickKeyTarget then
+    	self.brickKeyTarget = self.brickKeyTarget * 100
+    	self.brickKeyFlag = true
+    	self.brickKey:reset()
+    end
+    -- if brickKey item goes below bounds, remove it
+    if self.brickKey.y >= VIRTUAL_HEIGHT then
+    	self.brickKeyFlag = false
+    end
+    
+    -- if brickKey item collide with paddle
+    if self.brickKeyFlag and self.brickKey:collides(self.paddle) then
+        -- remove item ie. set flag false
+        self.brickKeyFlag = false
+        -- remove brickLocks
+        for k, brick in pairs(self.bricks) do
+		brick.locked = false
+        end
+    end
+    if self.brickKeyFlag then
+    	self.brickKey:update(dt)
+    end
+    
+    
     
     -- if ball collides with paddle
     for k, ball in pairs(self.balls) do     
@@ -131,7 +164,7 @@ function PlayState:update(dt)
 
         -- only check collision if we're in play
         if brick.inPlay and ball:collides(brick) then
-
+	    if not brick.locked then
             -- add to score
             self.score = self.score + (brick.tier * 200 + brick.color * 25)
 
@@ -175,7 +208,7 @@ function PlayState:update(dt)
                     recoverPoints = self.recoverPoints
                 })
             end
-
+	    end
             --
             -- collision code for bricks
             --
@@ -272,6 +305,11 @@ function PlayState:render()
     -- render powerup item
     if self.powerupFlag then
     	self.powerup:render()
+    end
+    
+    -- render brickKey item
+    if self.brickKeyFlag then
+    	self.brickKey:render()
     end
     
     -- render bricks

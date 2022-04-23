@@ -12,10 +12,11 @@
 
 Powerup = Class{}
 
-function Powerup:init()
+function Powerup:init(item)
     -- simple positional and dimensional variables
     self.width = 16
     self.height = 16
+    self.item = item
     
     self.x = VIRTUAL_WIDTH / 2 - 2
     self.y = VIRTUAL_HEIGHT / 2 - 2
@@ -85,6 +86,6 @@ end
 function Powerup:render()
     -- gTexture is our global texture for all blocks
     -- gBallFrames is a table of quads mapping to each individual ball skin in the texture
-    love.graphics.draw(gTextures['main'], gFrames['powerups'][3],
+    love.graphics.draw(gTextures['main'], gFrames['powerups'][self.item],
         self.x, self.y)
 end

@@ -111,7 +111,14 @@ function LevelMaker.createMap(level)
                 b.color = solidColor
                 b.tier = solidTier
             end 
-
+            
+            -- whether we want to lock this brick
+            if y == numRows and math.random(1,3) == 1 then
+                b.locked = true
+            else
+                b.locked = false
+            end
+            
             table.insert(bricks, b)
 
             -- Lua's version of the 'continue' statement

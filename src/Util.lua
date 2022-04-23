@@ -137,12 +137,23 @@ function GenerateQuadsPowerups(atlas)
     local counter = 1
     local quads = {}
 
-    for i = 0, 3 do
+    for i = 0, 9 do
         quads[counter] = love.graphics.newQuad(x, y, 16, 16, atlas:getDimensions())
         x = x + 16
         counter = counter + 1
     end
 
+    return quads
+end
+
+function GenerateQuadsBrickLocked(atlas)
+    local x = 5*32
+    local y = 3*16
+
+    local quads = {}
+
+    quads[1] = love.graphics.newQuad(x, y, 32, 16, atlas:getDimensions())
+    
     return quads
 end
 
