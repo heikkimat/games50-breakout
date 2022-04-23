@@ -31,7 +31,8 @@ function PlayState:enter(params)
     
     self.powerup = Powerup()
 
-    self.recoverPoints = 5000
+    self.recoverPoints = self.score + 10000
+    self.paddleIncreasePoints = self.score + 5000
 
     -- give ball random starting velocity
     for k, ball in pairs(self.balls) do 
@@ -148,6 +149,15 @@ function PlayState:update(dt)
                 -- play recover sound effect
                 gSounds['recover']:play()
             end
+            
+            -- if we have enough points, increase the size of paddle
+            if self.score > self.paddleIncreasePoints then
+                self.paddle:increaseSize()
+                self.paddleIncreasePoints = 2 * self.paddleIncreasePoints
+
+                -- play recover sound effect
+                gSounds['recover']:play()
+            end
 
             -- go to our victory screen if there are no more bricks left
             if self:checkVictory() then
@@ -227,6 +237,7 @@ function PlayState:update(dt)
     -- if all balls are out, revert to serve state and decrease health	
     if self:checkLost() then
         self.health = self.health - 1
+        self.paddle:decreaseSize()
         gSounds['hurt']:play()
 
         if self.health == 0 then
