@@ -152,6 +152,8 @@ function PlayState:update(dt)
             -- go to our victory screen if there are no more bricks left
             if self:checkVictory() then
                 gSounds['victory']:play()
+                
+                self.balls[1].inPlay = true
 
                 gStateMachine:change('victory', {
                     level = self.level,
